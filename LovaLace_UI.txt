@@ -1,0 +1,93 @@
+type: horizontal-stack
+cards:
+  - type: markdown
+    content: >
+      <center><b><font color=Yellow>Thông Tin Đồng Hồ
+      Điện</font></b></center>Tên KH:<font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','TenKhachHang')}}</font> (<font
+      color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','TrangThaiMatDien')}}</font> )
+      <br/>
+
+      Mã KH:<font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','MaKhachHang')}}</font><br/>
+
+      Mã Công Tơ: <font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','MaSoCongTo')}}</font><br/> Chỉ Số
+      Cũ: <b><font color=CCFF66> {{
+      state_attr('sensor.python_evn_mien_bac','ChiSoCu')}}</font></b>
+
+      Chỉ Số Mới: <b><font color=00FFCC> {{
+      state_attr('sensor.python_evn_mien_bac','ChiSoMoi')}}</font></b><br/>
+      <font color=red><b>-</b></font> Lịch Cắt Điện: <font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','LichCatDien').Ngay}}</font><font
+      color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','LichCatDien').Thoigian}}</font><br/>
+      <font color=red><b>-</b></font> Khu Vực Cắt Điện: <font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','LichCatDien').KhuVuc}}</font><br/>
+      <font color=red><b>-</b></font> Nội Dung: <font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','LichCatDien').NoiDung}}</font><br/>
+      Lần Cập Nhật Cuối: <font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','LanThayDoiCuoi')}}'</font> <hr/>
+
+
+      <center><b><font color=Yellow>Sản Lượng Điện Ngày</font></b></center> Hôm
+      Kia:  <font color='gree'> {{
+      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.Ngay}}</font>
+      - <font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.SanLuongTieuThu}}</font><br/>
+      Hôm Kìa:  <font color='gree'> {{
+      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKiaf.Ngay}}</font>
+      - <font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKiaf.SanLuongTieuThu}}</font><br/>
+      <font color=Yellow><b>- Ước Tính Tiền Điện Tháng Này:</b></font><br/> Ước
+      Tính Đến Ngày: <font color='gree'> {{
+      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.Ngay}}</font>,
+      SL: <font color='gree'> {{
+      state_attr('sensor.python_evn_mien_bac','UocTinhTienDienThangNay').ThoiDiemHienTai.Dien_Nang_Tieu_Thu}}</font><br/>
+      Số Tiền Cần TT (+10% VAT): <font color='gree'> {{
+      state_attr('sensor.python_evn_mien_bac','UocTinhTienDienThangNay').ThoiDiemHienTai.Tong_Tien_Can_TT}}</font>
+
+
+      <hr/><center><b><font color=Yellow>Thông Tin Thanh Toán Tiền
+      Điện</font></b></center> 
+
+
+      Kỳ <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Nay').Ky}}</font>
+      Tháng <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Nay').Thang}}-{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Nay').Nam}}</font>
+
+      - Sản Lượng Điện: <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Nay').SanLuong}}</font>
+
+      - Tổng Tiền (+10% VAT): <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Nay').SoTien_ThanhToan}}</font> 
+
+      - Trạng Thái Thanh Toán: <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Nay').TrangThai_ThanhToan}}</font>
+
+      - Thời Gian Thanh Toán: <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Nay').ThoiGianThanhToan}}</font>
+
+      - Phương Thức Thanh Toán: <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Nay').PhuongThucThanhToan}}</font>
+
+      - Tỉ Lệ: <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Nay').Ti_Le_ThayDoi}}</font>
+      So Với Tháng Trước
+
+
+      Tháng: <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Truoc').Thang}}-{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Truoc').Nam}}</font>
+
+      - Sản Lượng Điện: <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Truoc').SanLuong}}</font>
+
+      - Tổng Tiền (+10% VAT): <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Truoc').SoTien_ThanhToan}}</font>
+
+      - Trạng Thái Thanh Toán: <font color=gree>{{
+      state_attr('sensor.python_evn_mien_bac','Tien_Dien_Thang_Truoc').TrangThai_ThanhToan}}</font>
