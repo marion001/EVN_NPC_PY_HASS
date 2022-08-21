@@ -6,11 +6,11 @@ import datetime
 from datetime import datetime
 from datetime import timedelta, date
 from requests.structures import CaseInsensitiveDict
-Ma_Khach_Hang = "XXXXXXXXXXXX" #Mã Khách Hàng EVN Miền Bắc, thay mã khách hàng của bạn tại đây
+Ma_Khach_Hang = "PA23VG*******" #Mã Khách Hàng EVN Miền Bắc, thay mã khách hàng của bạn tại đây
 MaVung = Ma_Khach_Hang[0:6]
 MaDiemDo = Ma_Khach_Hang+"001"
 SetNgayThang = datetime.now().strftime('%d-%m-%Y')
-TruNgayThang = date.today() - timedelta(days=4)
+TruNgayThang = date.today() - timedelta(days=5)
 CongNgayCatDien = date.today() + timedelta(days=7)
 api_home1 = 'https://billnpccc.enterhub.asia/mobileapi/home/'+Ma_Khach_Hang
 API_Co_Mat_Dien = 'https://billnpccc.enterhub.asia/mobileapi/thong-tin-cat-dien/get/'+MaVung+'/'+Ma_Khach_Hang
@@ -26,33 +26,84 @@ headers1["User-Agent"] = "NPCApp/1 CFNetwork/1333.0.4 Darwin/21.5.0"
 headers1["Accept-Language"] = "vi-VN,vi;q=0.9"
 resp1 = requests.get(api_home1, headers=headers1)
 y = resp1.json()
+#print (y)
 # API requests
 resp2 = requests.request("GET", API_Co_Mat_Dien, headers={}, data={})
 resp3 = requests.request("GET", Api_Dien_Ngay, headers={}, data={})
 y3 = (resp3.json()) 
+#print (Api_Dien_Ngay)
+#print (y3)
 resp4 = requests.request("GET", API_Lich_Cat_Dien, headers={}, data={})
 y4 = (resp4.json()) 
 if y4["alert"] == "Không có lịch cắt điện":
     DataCD = y4["alert"]
     NgayCatDien = ""
-    KhuVucCatDien = "-"
-    NoiDungCatDien = "-"
+    KhuVucCatDien = "Không có"
+    NoiDungCatDien = "Không có"
 else:
     DataCD = 'Từ: '+y4["data"][0]["ngay_catdien"][11:-7]+' đến '+y4["data"][0]["ngay_tailap"][11:-7]
     NgayCatDien = y4["data"][0]["ngay_catdien"][8:-13]+'-'+y4["data"][0]["ngay_catdien"][5:-16]+'-'+y4["data"][0]["ngay_catdien"][0:-19]
     KhuVucCatDien = y4["data"][0]["khuvuc_matdien"]
     NoiDungCatDien = y4["data"][0]["noi_dung"]
-##replace true, false json TrangThai_ThanhToan
+#Tien_Dien_Thang_Truoc Json
+try:
+    if (y["data"]["customerInfo"]["invoice"][1]["paid"] == True):
+        TTTT2 = "Đã thanh toán"
+    else:
+        TTTT2 = "Chưa thanh toán"
+except IndexError:
+    TTTT2 = "Chưa có dữ liệu"
+try:
+    TDTTK = y["data"]["customerInfo"]["invoice"][1]["period"]
+except IndexError:
+    TDTTK = ""
+try:
+    TDTTT = y["data"]["customerInfo"]["invoice"][1]["month"]
+except IndexError:
+    TDTTT = "Chưa có dữ liệu"
+try:
+    TDTTN = y["data"]["customerInfo"]["invoice"][1]["year"]
+except IndexError:
+    TDTTN = ""
+try:
+    TDTTSL = str(y["data"]["customerInfo"]["invoice"][1]["usageAmount"])+"(kWh)"
+except IndexError:
+    TDTTSL = "Chưa có dữ liệu"
+try:
+    TDTTSTTT = format (y["data"]["customerInfo"]["invoice"][1]["paymentTotalAmount"], ',d')+"(VNĐ)"
+except IndexError:
+    TDTTSTTT = "Chưa có dữ liệu"
+
+if (y3[2]["CHI_SO_KET_THUC"] == None):
+    SoDien = round(y3[3]["CHI_SO_KET_THUC"] - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"])
+else:
+    SoDien = round(y3[2]["CHI_SO_KET_THUC"] - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"]) 
+"""  
+# Code Cũ
 if (y["data"]["customerInfo"]["invoice"][1]["paid"] == True):
     TTTT2 = "Đã thanh toán"
 else:
     TTTT2 = "Chưa thanh toán"
+""" 
 if (y["data"]["customerInfo"]["invoice"][0]["paid"] == True):
     TTTT1 = "Đã thanh toán"
 else:
     TTTT1 = "Chưa thanh toán"
+if (y["data"]["customerInfo"]["invoice"][0]["ngayTao"] == None):
+    ThoiGianThanhToan = "-"
+else:
+    ThoiGianThanhToan = y["data"]["customerInfo"]["invoice"][0]["ngayTao"][11:16]+' - '+y["data"]["customerInfo"]["invoice"][0]["ngayTao"][8:10]+'/'+y["data"]["customerInfo"]["invoice"][0]["ngayTao"][5:7]+'/'+y["data"]["customerInfo"]["invoice"][0]["ngayTao"][0:4]
+if (y["data"]["customerInfo"]["invoice"][0]["pttt"] == None):
+    PhuongThucThanhToan = "-"
+else:
+    PhuongThucThanhToan = y["data"]["customerInfo"]["invoice"][0]["pttt"]
+if (y3[2]["CHI_SO_KET_THUC"] == None):
+    SLDNHQ = "-"
+else:
+    SLDNHQ = str(y3[2]["CHI_SO_KET_THUC"])+"(kWh)"
+#str(y3[2]["CHI_SO_KET_THUC"])+"(kWh)
 #Ước Tính Tiền Điện Theo Bậc
-SoDien = round(y3[3]["CHI_SO_KET_THUC"] - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"])
+#SoDien = round(y3[2]["CHI_SO_KET_THUC"] - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"])
 # Từ 1 đến 50 số điện
 if SoDien <= 50:
     Tong = SoDien * 1678
@@ -133,6 +184,9 @@ else:
     Tong = "Có Lỗi Xảy Ra"
     VAT = "Có Lỗi Xảy Ra"
     TongTienCanTT = "Có Lỗi Xảy Ra"
+    
+
+    
 Vu_Tuyen_Json = {
     "name": "Get Data EVN Miền Bắc",
     "MaKhachHang": Ma_Khach_Hang,
@@ -148,7 +202,7 @@ Vu_Tuyen_Json = {
     "LanThayDoiCuoi": datetime.now().strftime('%H:%M'),
 	"UocTinhTienDienThangNay": {
         "ThoiDiemHienTai": {
-            "Tinh_Den_Ngay": y3[3]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[3]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[3]["THOI_GIAN_BAT_DAU"][0:4],
+            "Tinh_Den_Ngay": y3[2]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][0:4],
             "Dien_Nang_Tieu_Thu": str(SoDien)+"(kWh)",
             "Tien_Chua_thue": "{:,}".format(Tong)+"(VNĐ)",
             "Tien_Thue_VAT": "{:,}".format(VAT)+"(VNĐ)",
@@ -156,20 +210,20 @@ Vu_Tuyen_Json = {
     }
     },
     "SL_Dien_Theo_ngay": {
+       "HomQua": {
+             "Ngay": y3[2]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][0:4],
+             "ChiSoChot": SLDNHQ,
+             "SanLuongTieuThu": str(y3[2]["SAN_LUONG"])+"(kWh)"
+    },
        "HomKia": {
-             "Ngay": y3[3]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[3]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[3]["THOI_GIAN_BAT_DAU"][0:4],
-             "ChiSoChot": str(y3[3]["CHI_SO_KET_THUC"])+"(kWh)",
-             "SanLuongTieuThu": str(y3[3]["SAN_LUONG"])+"(kWh)"
+             "Ngay": y3[4]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[4]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[4]["THOI_GIAN_BAT_DAU"][0:4],
+             "ChiSoChot": str(y3[4]["CHI_SO_KET_THUC"])+"(kWh)",
+             "SanLuongTieuThu": str(y3[4]["SAN_LUONG"])+"(kWh)"
     },
        "HomKiaf": {
-             "Ngay": y3[5]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[5]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[5]["THOI_GIAN_BAT_DAU"][0:4],
-             "ChiSoChot": str(y3[5]["CHI_SO_KET_THUC"])+"(kWh)",
-             "SanLuongTieuThu": str(y3[5]["SAN_LUONG"])+"(kWh)"
-    },
-       "HomKiafNua": {
-             "Ngay": y3[7]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[7]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[7]["THOI_GIAN_BAT_DAU"][0:4],
-             "ChiSoChot": str(y3[7]["CHI_SO_KET_THUC"])+"(kWh)",
-             "SanLuongTieuThu": str(y3[7]["SAN_LUONG"])+"(kWh)"
+             "Ngay": y3[6]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[6]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[6]["THOI_GIAN_BAT_DAU"][0:4],
+             "ChiSoChot": str(y3[6]["CHI_SO_KET_THUC"])+"(kWh)",
+             "SanLuongTieuThu": str(y3[6]["SAN_LUONG"])+"(kWh)"
     }},
 	"LichCatDien": {
 		"Ngay": NgayCatDien,
@@ -185,15 +239,15 @@ Vu_Tuyen_Json = {
        "SoTien_ThanhToan": format (y["data"]["customerInfo"]["invoice"][0]["paymentTotalAmount"], ',d')+"(VNĐ)",
        "TrangThai_ThanhToan": TTTT1,
        "Ti_Le_ThayDoi": str(y["data"]["customerInfo"]["chiSoDienList"][0]["sanLuongChangeRate"])+"%",
-       "PhuongThucThanhToan": y["data"]["customerInfo"]["invoice"][0]["pttt"],
-       "ThoiGianThanhToan": y["data"]["customerInfo"]["invoice"][0]["ngayTao"][11:16]+'-'+y["data"]["customerInfo"]["invoice"][0]["ngayTao"][8:10]+'/'+y["data"]["customerInfo"]["invoice"][0]["ngayTao"][5:7]+'/'+y["data"]["customerInfo"]["invoice"][0]["ngayTao"][0:4]
+       "PhuongThucThanhToan": PhuongThucThanhToan,
+       "ThoiGianThanhToan": ThoiGianThanhToan
     },
     "Tien_Dien_Thang_Truoc": {
-       "Ky": y["data"]["customerInfo"]["invoice"][1]["period"],
-       "Thang": y["data"]["customerInfo"]["invoice"][1]["month"],
-       "Nam": y["data"]["customerInfo"]["invoice"][1]["year"],
-       "SanLuong": str(y["data"]["customerInfo"]["invoice"][1]["usageAmount"])+"(kWh)",
-       "SoTien_ThanhToan": format (y["data"]["customerInfo"]["invoice"][1]["paymentTotalAmount"], ',d')+"(VNĐ)",
+       "Ky": TDTTK,
+       "Thang": TDTTT,
+       "Nam": TDTTN,
+       "SanLuong": TDTTSL,
+       "SoTien_ThanhToan": TDTTSTTT,
        "TrangThai_ThanhToan": TTTT2
 
     },
