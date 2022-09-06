@@ -6,35 +6,100 @@ import datetime
 from datetime import datetime
 from datetime import timedelta, date
 from requests.structures import CaseInsensitiveDict
-Ma_Khach_Hang = "PA23VG*******" #Mã Khách Hàng EVN Miền Bắc, thay mã khách hàng của bạn tại đây
+Ma_Khach_Hang = "PA23*********" #Mã Khách Hàng EVN Miền Bắc, thay mã khách hàng của bạn tại đây
+Mat_Khau = "******"             #Mật Khẩu Đăng nhập App EVNNPC.CSKH
 MaVung = Ma_Khach_Hang[0:6]
-MaDiemDo = Ma_Khach_Hang+"001"
+#MaDiemDo = Ma_Khach_Hang+"001"
 SetNgayThang = datetime.now().strftime('%d-%m-%Y')
 TruNgayThang = date.today() - timedelta(days=5)
 CongNgayCatDien = date.today() + timedelta(days=7)
-api_home1 = 'https://billnpccc.enterhub.asia/mobileapi/home/'+Ma_Khach_Hang
-API_Co_Mat_Dien = 'https://billnpccc.enterhub.asia/mobileapi/thong-tin-cat-dien/get/'+MaVung+'/'+Ma_Khach_Hang
-Api_Dien_Ngay = 'https://meterindex.enterhub.asia/SLngay?MA_DDO='+MaDiemDo+'&STARTTIME='+TruNgayThang.strftime("%d-%m-%Y")+'&STOPTIME='+SetNgayThang+''
-API_Lich_Cat_Dien = 'https://billnpccc.enterhub.asia/PowerLossByCustomerID?ma_khang='+Ma_Khach_Hang+'&tu_ngay='+SetNgayThang+'&den_ngay='+CongNgayCatDien.strftime("%d-%m-%Y")+'&ma_ddo='+MaDiemDo+''
+URL_Bear_Token = 'https://billnpccc.enterhub.asia/login'
+API_HOME = 'https://billnpccc.enterhub.asia/mobileapi/home/'+Ma_Khach_Hang
+API_Co_Mat_Dien = 'https://billnpccc.enterhub.asia/mobileapi/thong-tin-cat-dien'
+Api_Dien_Ngay = 'https://billnpccc.enterhub.asia/dailyconsump'
+API_Lich_Cat_Dien = 'https://billnpccc.enterhub.asia/PowerLossByCustomerID'
 #####################################################################
-#Api Home
-headers1 = CaseInsensitiveDict()
-headers1["Host"] = "billnpccc.enterhub.asia"
-headers1["Content-Type"] = "application/json"
-headers1["Accept"] = "application/json"
-headers1["User-Agent"] = "NPCApp/1 CFNetwork/1333.0.4 Darwin/21.5.0"
-headers1["Accept-Language"] = "vi-VN,vi;q=0.9"
-resp1 = requests.get(api_home1, headers=headers1)
+#GET Token Bearer Authorization
+Bearer_Authorization = {
+  'Host': 'billnpccc.enterhub.asia',
+  'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
+  'Accept': '*/*',
+  'Accept-Language': 'vi-VN,vi;q=0.9',
+  'Authorization': 'Basic QTIxRkE1Qy0zNEJFLTQyRDctQUU3MC04QkYwM0MxRUU1NDA6MDI2QTY0RUYtMkE5MS00OTczLUFBMjAtNkU4QTJCNjZENTYw',
+  'Content-Type': 'application/x-www-form-urlencoded'
+}
+Token_EVN = requests.request("POST", URL_Bear_Token, headers=Bearer_Authorization, data='username='+Ma_Khach_Hang+'&password='+Mat_Khau)
+Bearer_Token = Token_EVN.json()
+#print(Bearer_Token["access_token"])
+#print(Bearer_Token)
+#############################
+#GET HOME
+HOME_EVN_NPC = {
+  'Host': 'billnpccc.enterhub.asia',
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
+  'Authorization': 'Bearer '+Bearer_Token["access_token"],
+  'Accept-Language': 'vi-VN,vi;q=0.9'
+}
+resp1 = requests.request("GET", API_HOME, headers=HOME_EVN_NPC, data={})
 y = resp1.json()
-#print (y)
-# API requests
-resp2 = requests.request("GET", API_Co_Mat_Dien, headers={}, data={})
-resp3 = requests.request("GET", Api_Dien_Ngay, headers={}, data={})
-y3 = (resp3.json()) 
-#print (Api_Dien_Ngay)
-#print (y3)
-resp4 = requests.request("GET", API_Lich_Cat_Dien, headers={}, data={})
+#print (y["data"]["customerInfo"]["name"])   #Test Lấy dữ liệu Json
+
+# API Co Mat Dien
+payload_Co_Mat_Dien = json.dumps({
+  "madv": MaVung,
+  "mado": Ma_Khach_Hang
+})
+headers_Co_Mat_Dien = {
+  'Host': 'billnpccc.enterhub.asia',
+  'Content-Type': 'application/json',
+  'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
+  'Accept': 'application/json',
+  'Accept-Language': 'vi-VN,vi;q=0.9',
+  'Authorization': 'Bearer '+Bearer_Token["access_token"]
+}
+resp2 = requests.request("POST", API_Co_Mat_Dien, headers=headers_Co_Mat_Dien, data=payload_Co_Mat_Dien)
+#CoMatDien = json.loads(resp2.json())
+#print(json.loads(resp2.json())["alert"])
+
+#API Điện Ngày
+payload_DienNgay = json.dumps({
+  "ma": Ma_Khach_Hang+"001",
+  "start_intime": TruNgayThang.strftime("%d-%m-%Y"),
+  "stop_intime": SetNgayThang
+})
+headers_DienNgay = {
+  'Host': 'billnpccc.enterhub.asia',
+  'Content-Type': 'application/json',
+  'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
+  'Accept': 'application/json',
+  'Accept-Language': 'vi-VN,vi;q=0.9',
+  'Authorization': 'Bearer '+Bearer_Token["access_token"]
+}
+resp3 = requests.request("POST", Api_Dien_Ngay, headers=headers_DienNgay, data=payload_DienNgay)
+y3 = json.loads(resp3.json())
+#print(y3[2]["THOI_GIAN_BAT_DAU"]) #Test lấy dữ liệu điện ngày
+
+#APi Lịch Cắt Điện
+payload_PowerLossByCustomerID = json.dumps({
+  "ma_khang": Ma_Khach_Hang,
+  "tu_ngay": SetNgayThang,
+  "den_ngay": CongNgayCatDien.strftime("%d-%m-%Y"),
+  "ma_ddo": Ma_Khach_Hang+"001"
+})
+headers_PowerLossByCustomerID = {
+  'Host': 'billnpccc.enterhub.asia',
+  'Content-Type': 'application/json',
+  'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
+  'Accept': 'application/json',
+  'Accept-Language': 'vi-VN,vi;q=0.9',
+  'Authorization': 'Bearer '+Bearer_Token["access_token"]
+}
+resp4 = requests.request("POST", API_Lich_Cat_Dien, headers=headers_PowerLossByCustomerID, data=payload_PowerLossByCustomerID)
 y4 = (resp4.json()) 
+#print(y4["alert"])  #Test Lấy Dữ Liệu json Lịch Cắt điện
+
 if y4["alert"] == "Không có lịch cắt điện":
     DataCD = y4["alert"]
     NgayCatDien = ""
@@ -73,18 +138,10 @@ try:
     TDTTSTTT = format (y["data"]["customerInfo"]["invoice"][1]["paymentTotalAmount"], ',d')+"(VNĐ)"
 except IndexError:
     TDTTSTTT = "Chưa có dữ liệu"
-
 if (y3[2]["CHI_SO_KET_THUC"] == None):
     SoDien = round(y3[3]["CHI_SO_KET_THUC"] - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"])
 else:
     SoDien = round(y3[2]["CHI_SO_KET_THUC"] - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"]) 
-"""  
-# Code Cũ
-if (y["data"]["customerInfo"]["invoice"][1]["paid"] == True):
-    TTTT2 = "Đã thanh toán"
-else:
-    TTTT2 = "Chưa thanh toán"
-""" 
 if (y["data"]["customerInfo"]["invoice"][0]["paid"] == True):
     TTTT1 = "Đã thanh toán"
 else:
@@ -101,9 +158,8 @@ if (y3[2]["CHI_SO_KET_THUC"] == None):
     SLDNHQ = "-"
 else:
     SLDNHQ = str(y3[2]["CHI_SO_KET_THUC"])+"(kWh)"
-#str(y3[2]["CHI_SO_KET_THUC"])+"(kWh)
-#Ước Tính Tiền Điện Theo Bậc
-#SoDien = round(y3[2]["CHI_SO_KET_THUC"] - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"])
+
+#Tính Toán Tiền Điện Theo Bậc
 # Từ 1 đến 50 số điện
 if SoDien <= 50:
     Tong = SoDien * 1678
@@ -184,9 +240,7 @@ else:
     Tong = "Có Lỗi Xảy Ra"
     VAT = "Có Lỗi Xảy Ra"
     TongTienCanTT = "Có Lỗi Xảy Ra"
-    
 
-    
 Vu_Tuyen_Json = {
     "name": "Get Data EVN Miền Bắc",
     "MaKhachHang": Ma_Khach_Hang,
@@ -198,7 +252,8 @@ Vu_Tuyen_Json = {
     "MaSoCongTo": y["data"]["customerInfo"]["soCongToList"][0],
     "ChiSoCu": str(y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoCu"]) + "(kWh)",
     "ChiSoMoi": str(y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"]) + "(kWh)",
-    "TrangThaiMatDien": (resp2.json()["alert"]),
+#    "TrangThaiMatDien": (resp2.json()["alert"]),
+    "TrangThaiMatDien": (json.loads(resp2.json())["alert"]),
     "LanThayDoiCuoi": datetime.now().strftime('%H:%M'),
 	"UocTinhTienDienThangNay": {
         "ThoiDiemHienTai": {
