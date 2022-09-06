@@ -1,6 +1,6 @@
 B1. tạo 1 thư mục tên "EVN" ngang hàng với file "configuration.yaml". nghĩa là file "configuration.yaml" nằm ở đâu thì bạn tạo thư mục tên EVN ở đấy
 
-B2. tải file EVN.py về máy rồi mở file lên Thêm Mã khách Hàng của bạn vào ở dòng số 9 có tên: "Ma_Khach_Hang" rồi lưu lại, xong coppy file đó  vào thư mục EVN vừa mới tạo
+B2. tải file EVN.py về máy rồi mở file lên Thay Mã khách Hàng và Mật Khẩu của bạn vào  dòng số 9 có tên: "Ma_Khach_Hang" và dòng số 10 có tên: "Mat_Khau" rồi lưu lại, xong coppy file đó  vào thư mục EVN vừa mới tạo
 
 B3: cấu hình trong file "sensors.yaml" theo mẫu dưới đây:
 
