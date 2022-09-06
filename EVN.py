@@ -1,6 +1,7 @@
 # encoding: utf-8
 # import datetime
 import json
+import base64
 import requests
 import datetime
 from datetime import datetime
@@ -13,6 +14,7 @@ MaVung = Ma_Khach_Hang[0:6]
 SetNgayThang = datetime.now().strftime('%d-%m-%Y')
 TruNgayThang = date.today() - timedelta(days=5)
 CongNgayCatDien = date.today() + timedelta(days=7)
+Key_Basic = "A21FA5C-34BE-42D7-AE70-8BF03C1EE540:026A64EF-2A91-4973-AA20-6E8A2B66D560"
 URL_Bear_Token = 'https://billnpccc.enterhub.asia/login'
 API_HOME = 'https://billnpccc.enterhub.asia/mobileapi/home/'+Ma_Khach_Hang
 API_Co_Mat_Dien = 'https://billnpccc.enterhub.asia/mobileapi/thong-tin-cat-dien'
@@ -25,7 +27,7 @@ Bearer_Authorization = {
   'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
   'Accept': '*/*',
   'Accept-Language': 'vi-VN,vi;q=0.9',
-  'Authorization': 'Basic QTIxRkE1Qy0zNEJFLTQyRDctQUU3MC04QkYwM0MxRUU1NDA6MDI2QTY0RUYtMkE5MS00OTczLUFBMjAtNkU4QTJCNjZENTYw',
+  'Authorization': 'Basic '+base64.b64encode(Key_Basic.encode('ascii')).decode('ascii'),
   'Content-Type': 'application/x-www-form-urlencoded'
 }
 Token_EVN = requests.request("POST", URL_Bear_Token, headers=Bearer_Authorization, data='username='+Ma_Khach_Hang+'&password='+Mat_Khau)
