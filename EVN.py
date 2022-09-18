@@ -7,7 +7,7 @@ import datetime
 from datetime import datetime
 from datetime import timedelta, date
 from requests.structures import CaseInsensitiveDict
-Ma_Khach_Hang = "PA23*********" #Mã Khách Hàng EVN Miền Bắc, thay mã khách hàng của bạn tại đây
+Ma_Khach_Hang = "PA***********" #Mã Khách Hàng EVN Miền Bắc, thay mã khách hàng của bạn tại đây
 Mat_Khau = "******"             #Mật Khẩu Đăng nhập App EVNNPC.CSKH
 MaVung = Ma_Khach_Hang[0:6]
 #MaDiemDo = Ma_Khach_Hang+"001"
@@ -243,6 +243,9 @@ else:
     VAT = "Có Lỗi Xảy Ra"
     TongTienCanTT = "Có Lỗi Xảy Ra"
 
+#SoTien_HomQua = y3[2]["SAN_LUONG"] * 1678
+#print ("{:,}".format(y3[2]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)")
+
 Vu_Tuyen_Json = {
     "name": "Get Data EVN Miền Bắc",
     "MaKhachHang": Ma_Khach_Hang,
@@ -270,17 +273,20 @@ Vu_Tuyen_Json = {
        "HomQua": {
              "Ngay": y3[2]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][0:4],
              "ChiSoChot": SLDNHQ,
-             "SanLuongTieuThu": str(y3[2]["SAN_LUONG"])+"(kWh)"
+             "SanLuongTieuThu": str(y3[2]["SAN_LUONG"])+"(kWh)",
+             "SoTienHomQua_VND": "{:,}".format(y3[2]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)"
     },
        "HomKia": {
              "Ngay": y3[4]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[4]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[4]["THOI_GIAN_BAT_DAU"][0:4],
              "ChiSoChot": str(y3[4]["CHI_SO_KET_THUC"])+"(kWh)",
-             "SanLuongTieuThu": str(y3[4]["SAN_LUONG"])+"(kWh)"
+             "SanLuongTieuThu": str(y3[4]["SAN_LUONG"])+"(kWh)",
+             "SoTienHomKia_VND": "{:,}".format(y3[4]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)"
     },
        "HomKiaf": {
              "Ngay": y3[6]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[6]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[6]["THOI_GIAN_BAT_DAU"][0:4],
              "ChiSoChot": str(y3[6]["CHI_SO_KET_THUC"])+"(kWh)",
-             "SanLuongTieuThu": str(y3[6]["SAN_LUONG"])+"(kWh)"
+             "SanLuongTieuThu": str(y3[6]["SAN_LUONG"])+"(kWh)",
+             "SoTienHomKiaf_VND": "{:,}".format(y3[6]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)"
     }},
 	"LichCatDien": {
 		"Ngay": NgayCatDien,
