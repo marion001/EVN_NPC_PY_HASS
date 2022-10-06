@@ -1,0 +1,34 @@
+alias: Thông báo điện năng tiêu thụ mỗi ngày
+trigger:
+  - platform: time
+    at: "07:00:00"
+action:
+  - service: notify.mobile_app_iphone_6s_vu_tuyen
+    data:
+      title: Sản Lượng Điện Ngày
+      message: >-
+        - Hôm Qua:
+        {{state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomQua.Ngay}}
+        -
+        {{state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomQua.SanLuongTieuThu}}{{'\n'}}
+        - Hôm Kia:
+        {{state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.Ngay}}
+        -
+        {{state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.SanLuongTieuThu}}{{'\n'}}
+        Ước Tính Tiền Điện Tháng Này:
+        {{state_attr('sensor.python_evn_mien_bac','UocTinhTienDienThangNay').ThoiDiemHienTai.Tong_Tien_Can_TT}}
+  - service: notify.mobile_app_iphone_hoa
+    data:
+      title: Sản Lượng Điện Ngày
+      message: >-
+        - Hôm Qua:
+        {{state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomQua.Ngay}}
+        -
+        {{state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomQua.SanLuongTieuThu}}{{'\n'}}
+        - Hôm Kia:
+        {{state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.Ngay}}
+        -
+        {{state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.SanLuongTieuThu}}{{'\n'}}
+        Ước Tính Tiền Điện Tháng Này:
+        {{state_attr('sensor.python_evn_mien_bac','UocTinhTienDienThangNay').ThoiDiemHienTai.Tong_Tien_Can_TT}}
+mode: single
