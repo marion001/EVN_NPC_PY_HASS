@@ -36,4 +36,4 @@ B4. cấu hình xong lưu file lại rồi vào HomeAssistant check config, sẽ
 
 B5. khởi động lại xong các bạn kiểm tra xem đã có sensor.python_evn_mien_bac chưa nhé
 
-B6. Cấu hình LoveLace UI, các bạn tạo 1 thẻ type cards bất kỳ rồi các b chọn "Sửa mã nguồn" xóa toàn bộ nội dung trong thẻ đó đi rồi coppy nội dung trong file LoveLace_UI.txt or https://github.com/marion001/EVN_NPC_PY_HASS/blob/main/LovaLace_UI.txt dán vào là xong
+B6. Cấu hình LoveLace UI, các bạn tạo 1 thẻ type cards bất kỳ rồi các b chọn "Sửa mã nguồn" xóa toàn bộ nội dung trong thẻ đó đi rồi coppy nội dung trong file LoveLace_UI.txt or https://github.com/marion001/EVN_NPC_PY_HASS/blob/main/LovaLace_UI.yaml dán vào là xong
