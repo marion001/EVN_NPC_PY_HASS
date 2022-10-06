@@ -32,14 +32,18 @@ cards:
 
 
       <center><b><font color=Yellow>Sản Lượng Điện Ngày</font></b></center> Hôm
-      Kia:  <font color='gree'> {{
+      Qua:  <font color='gree'> {{
+      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomQua.Ngay}}</font>
+      - <font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomQua.SanLuongTieuThu}}</font>
+       = <font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomQua.SoTienHomQua_VND}}</font><br/>
+      Hôm Kia:  <font color='gree'> {{
       state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.Ngay}}</font>
       - <font color=gree> {{
-      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.SanLuongTieuThu}}</font><br/>
-      Hôm Kìa:  <font color='gree'> {{
-      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKiaf.Ngay}}</font>
-      - <font color=gree> {{
-      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKiaf.SanLuongTieuThu}}</font><br/>
+      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.SanLuongTieuThu}}</font>
+      = <font color=gree> {{
+      state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.SoTienHomKia_VND}}</font><br/>
       <font color=Yellow><b>- Ước Tính Tiền Điện Tháng Này:</b></font><br/> Ước
       Tính Đến Ngày: <font color='gree'> {{
       state_attr('sensor.python_evn_mien_bac','SL_Dien_Theo_ngay').HomKia.Ngay}}</font>,
