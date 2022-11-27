@@ -1,0 +1,28 @@
+alias: Thông Báo Lịch Mất Điện tts và notify 04h01'
+description: ""
+trigger:
+  - platform: time
+    at: "04:01:00"
+condition:
+  - condition: template
+    value_template: >
+      {% if state_attr('sensor.python_evn_mien_bac','LichCatDien').Thoigian ==
+      'Không có lịch cắt điện' %}
+        false
+      {% else %}
+        true
+      {% endif %}
+  - condition: template
+    value_template: |2-
+       {% set tinhthoigian = (as_timestamp(state_attr('sensor.python_evn_mien_bac','LichCatDien').NotifiNgayCatDien)
+            - as_timestamp(now()))/3600 %}
+            {{ tinhthoigian < 24 and tinhthoigian >= 0 }}
+action:
+  - service: notify.mobile_app_iphone_6s_vu_tuyen
+    data:
+      title: "Lịch Cắt Điện:"
+      message: >-
+        Ngày: {{state_attr('sensor.python_evn_mien_bac','LichCatDien').Ngay}}
+        {{state_attr('sensor.python_evn_mien_bac','LichCatDien').Thoigian}}.
+        {{state_attr('sensor.python_evn_mien_bac','LichCatDien').NoiDung}}
+mode: single
