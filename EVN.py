@@ -103,12 +103,14 @@ y4 = (resp4.json())
 #print(y4["alert"])  #Test Lấy Dữ Liệu json Lịch Cắt điện
 
 if y4["alert"] == "Không có lịch cắt điện":
-    DataCD = y4["alert"]
+    ThoiGianCatDien = y4["alert"]
+    NotifiNgayCatDien = ""
     NgayCatDien = ""
     KhuVucCatDien = "Không có"
     NoiDungCatDien = "Không có"
 else:
-    DataCD = 'Từ: '+y4["data"][0]["ngay_catdien"][11:-7]+' đến '+y4["data"][0]["ngay_tailap"][11:-7]
+    ThoiGianCatDien = 'Từ: '+y4["data"][0]["ngay_catdien"][11:-7]+' đến '+y4["data"][0]["ngay_tailap"][11:-7]
+    NotifiNgayCatDien = y4["data"][0]["ngay_catdien"][0:10]+' 00:00:00'
     NgayCatDien = y4["data"][0]["ngay_catdien"][8:-13]+'-'+y4["data"][0]["ngay_catdien"][5:-16]+'-'+y4["data"][0]["ngay_catdien"][0:-19]
     KhuVucCatDien = y4["data"][0]["khuvuc_matdien"]
     NoiDungCatDien = y4["data"][0]["noi_dung"]
@@ -290,9 +292,10 @@ Vu_Tuyen_Json = {
     }},
 	"LichCatDien": {
 		"Ngay": NgayCatDien,
-		"Thoigian": DataCD,
+		"Thoigian": ThoiGianCatDien,
 		"KhuVuc": KhuVucCatDien,
-		"NoiDung": NoiDungCatDien
+		"NoiDung": NoiDungCatDien,
+        "NotifiNgayCatDien": NotifiNgayCatDien
     },
     "Tien_Dien_Thang_Nay": {
        "Ky": y["data"]["customerInfo"]["invoice"][0]["period"],
