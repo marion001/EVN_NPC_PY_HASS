@@ -47,7 +47,6 @@ HOME_EVN_NPC = {
 resp1 = requests.request("GET", API_HOME, headers=HOME_EVN_NPC, data={})
 y = resp1.json()
 #print (y["data"]["customerInfo"]["name"])   #Test Lấy dữ liệu Json
-
 # API Co Mat Dien
 payload_Co_Mat_Dien = json.dumps({
   "madv": MaVung,
@@ -62,9 +61,6 @@ headers_Co_Mat_Dien = {
   'Authorization': 'Bearer '+Bearer_Token["access_token"]
 }
 resp2 = requests.request("POST", API_Co_Mat_Dien, headers=headers_Co_Mat_Dien, data=payload_Co_Mat_Dien)
-#CoMatDien = json.loads(resp2.json())
-#print(json.loads(resp2.json())["alert"])
-
 #API Điện Ngày
 payload_DienNgay = json.dumps({
   "ma": Ma_Khach_Hang+"001",
@@ -80,10 +76,37 @@ headers_DienNgay = {
   'Authorization': 'Bearer '+Bearer_Token["access_token"]
 }
 resp3 = requests.request("POST", Api_Dien_Ngay, headers=headers_DienNgay, data=payload_DienNgay)
-y3 = json.loads(resp3.json())
-#print(y3[2]["THOI_GIAN_BAT_DAU"]) #Test lấy dữ liệu điện ngày
-
-#APi Lịch Cắt Điện
+#Bỏ qua lỗi nết get API điện ngày thất bại
+try:
+    resp3 = requests.request("POST", Api_Dien_Ngay, headers=headers_DienNgay, data=payload_DienNgay)
+    y3 = json.loads(resp3.json())
+    y3_2_get_chi_so_ket_thuc = y3[2]["CHI_SO_KET_THUC"]
+    y3_3_get_chi_so_ket_thuc = y3[3]["CHI_SO_KET_THUC"]
+    y3_2_bat_dau_den_ngay = y3[2]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][0:4]
+    y3_4_bat_dau_den_ngay = y3[4]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[4]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[4]["THOI_GIAN_BAT_DAU"][0:4]
+    y3_6_bat_dau_den_ngay = y3[6]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[6]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[6]["THOI_GIAN_BAT_DAU"][0:4]
+    y3_2_san_luong_tieu_thu = str(y3[2]["SAN_LUONG"])+"(kWh)"
+    y3_4_san_luong_tieu_thu = str(y3[4]["CHI_SO_KET_THUC"])+"(kWh)"
+    y3_6_san_luong_tieu_thu = str(y3[6]["CHI_SO_KET_THUC"])+"(kWh)"
+    y3_2_san_luong = "{:,}".format(y3[2]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)"
+    y3_4_san_luong = "{:,}".format(y3[4]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)"
+    y3_6_san_luong = "{:,}".format(y3[6]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)"
+    y3_4_san_luong_tt = str(y3[4]["SAN_LUONG"])+"(kWh)"
+    y3_6_san_luong_tt = str(y3[6]["SAN_LUONG"])+"(kWh)"
+except:
+    y3_2_get_chi_so_ket_thuc = y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"]
+    y3_3_get_chi_so_ket_thuc = y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"]
+    y3_2_bat_dau_den_ngay = " - "
+    y3_4_bat_dau_den_ngay = " - "
+    y3_6_bat_dau_den_ngay = " - "
+    y3_2_san_luong_tieu_thu = " - "
+    y3_4_san_luong_tieu_thu = " - "
+    y3_6_san_luong_tieu_thu = " - "
+    y3_2_san_luong = " - "
+    y3_4_san_luong = " - "
+    y3_6_san_luong = " - "
+    y3_4_san_luong_tt = " - "
+    y3_6_san_luong_tt = " - "
 payload_PowerLossByCustomerID = json.dumps({
   "ma_khang": Ma_Khach_Hang,
   "tu_ngay": SetNgayThang,
@@ -100,8 +123,6 @@ headers_PowerLossByCustomerID = {
 }
 resp4 = requests.request("POST", API_Lich_Cat_Dien, headers=headers_PowerLossByCustomerID, data=payload_PowerLossByCustomerID)
 y4 = (resp4.json()) 
-#print(y4["alert"])  #Test Lấy Dữ Liệu json Lịch Cắt điện
-
 if y4["alert"] == "Không có lịch cắt điện":
     ThoiGianCatDien = y4["alert"]
     NotifiNgayCatDien = ""
@@ -142,10 +163,10 @@ try:
     TDTTSTTT = format (y["data"]["customerInfo"]["invoice"][1]["paymentTotalAmount"], ',d')+"(VNĐ)"
 except IndexError:
     TDTTSTTT = "Chưa có dữ liệu"
-if (y3[2]["CHI_SO_KET_THUC"] == None):
-    SoDien = round(y3[3]["CHI_SO_KET_THUC"] - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"])
+if (y3_2_get_chi_so_ket_thuc == None):
+    SoDien = round(y3_3_get_chi_so_ket_thuc - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"])
 else:
-    SoDien = round(y3[2]["CHI_SO_KET_THUC"] - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"]) 
+    SoDien = round(y3_2_get_chi_so_ket_thuc - y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"]) 
 if (y["data"]["customerInfo"]["invoice"][0]["paid"] == True):
     TTTT1 = "Đã thanh toán"
 else:
@@ -158,10 +179,15 @@ if (y["data"]["customerInfo"]["invoice"][0]["pttt"] == None):
     PhuongThucThanhToan = "-"
 else:
     PhuongThucThanhToan = y["data"]["customerInfo"]["invoice"][0]["pttt"]
-if (y3[2]["CHI_SO_KET_THUC"] == None):
+if (y3_2_get_chi_so_ket_thuc == None):
     SLDNHQ = "-"
 else:
-    SLDNHQ = str(y3[2]["CHI_SO_KET_THUC"])+"(kWh)"
+    SLDNHQ = str(y3_2_get_chi_so_ket_thuc)+"(kWh)"
+ssTi_Le_ThayDoi = str(y["data"]["customerInfo"]["chiSoDienList"][0]["sanLuongChangeRate"])
+if (ssTi_Le_ThayDoi[0] == "-"):
+    Ti_Le_Thay_Doi = "Giảm "+str(y["data"]["customerInfo"]["chiSoDienList"][0]["sanLuongChangeRate"])+"%"
+else:
+    Ti_Le_Thay_Doi = "Tăng "+str(y["data"]["customerInfo"]["chiSoDienList"][0]["sanLuongChangeRate"])+"%"
 
 #Tính Toán Tiền Điện Theo Bậc
 # Từ 1 đến 50 số điện
@@ -244,10 +270,6 @@ else:
     Tong = "Có Lỗi Xảy Ra"
     VAT = "Có Lỗi Xảy Ra"
     TongTienCanTT = "Có Lỗi Xảy Ra"
-
-#SoTien_HomQua = y3[2]["SAN_LUONG"] * 1678
-#print ("{:,}".format(y3[2]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)")
-
 Vu_Tuyen_Json = {
     "name": "Get Data EVN Miền Bắc",
     "MaKhachHang": Ma_Khach_Hang,
@@ -259,12 +281,11 @@ Vu_Tuyen_Json = {
     "MaSoCongTo": y["data"]["customerInfo"]["soCongToList"][0],
     "ChiSoCu": str(y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoCu"]) + "(kWh)",
     "ChiSoMoi": str(y["data"]["customerInfo"]["chiSoDienList"][0]["chiSoMoi"]) + "(kWh)",
-#    "TrangThaiMatDien": (resp2.json()["alert"]),
     "TrangThaiMatDien": (json.loads(resp2.json())["alert"]),
     "LanThayDoiCuoi": datetime.now().strftime('%H:%M'),
 	"UocTinhTienDienThangNay": {
         "ThoiDiemHienTai": {
-            "Tinh_Den_Ngay": y3[2]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][0:4],
+            "Tinh_Den_Ngay": y3_2_bat_dau_den_ngay,
             "Dien_Nang_Tieu_Thu": str(SoDien)+"(kWh)",
             "Tien_Chua_thue": "{:,}".format(Tong)+"(VNĐ)",
             "Tien_Thue_VAT": "{:,}".format(VAT)+"(VNĐ)",
@@ -273,22 +294,22 @@ Vu_Tuyen_Json = {
     },
     "SL_Dien_Theo_ngay": {
        "HomQua": {
-             "Ngay": y3[2]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[2]["THOI_GIAN_BAT_DAU"][0:4],
+             "Ngay": y3_2_bat_dau_den_ngay,
              "ChiSoChot": SLDNHQ,
-             "SanLuongTieuThu": str(y3[2]["SAN_LUONG"])+"(kWh)",
-             "SoTienHomQua_VND": "{:,}".format(y3[2]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)"
+             "SanLuongTieuThu": y3_2_san_luong_tieu_thu,
+             "SoTienHomQua_VND": y3_2_san_luong
     },
        "HomKia": {
-             "Ngay": y3[4]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[4]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[4]["THOI_GIAN_BAT_DAU"][0:4],
-             "ChiSoChot": str(y3[4]["CHI_SO_KET_THUC"])+"(kWh)",
-             "SanLuongTieuThu": str(y3[4]["SAN_LUONG"])+"(kWh)",
-             "SoTienHomKia_VND": "{:,}".format(y3[4]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)"
+             "Ngay": y3_4_bat_dau_den_ngay,
+             "ChiSoChot": y3_4_san_luong_tieu_thu,
+             "SanLuongTieuThu": y3_4_san_luong_tt,
+             "SoTienHomKia_VND": y3_4_san_luong
     },
        "HomKiaf": {
-             "Ngay": y3[6]["THOI_GIAN_BAT_DAU"][8:10]+'/'+y3[6]["THOI_GIAN_BAT_DAU"][5:7]+'/'+y3[6]["THOI_GIAN_BAT_DAU"][0:4],
-             "ChiSoChot": str(y3[6]["CHI_SO_KET_THUC"])+"(kWh)",
-             "SanLuongTieuThu": str(y3[6]["SAN_LUONG"])+"(kWh)",
-             "SoTienHomKiaf_VND": "{:,}".format(y3[6]["SAN_LUONG"] * 1678).split(".",1)[0]+"(VNĐ)"
+             "Ngay": y3_6_bat_dau_den_ngay,
+             "ChiSoChot": y3_6_san_luong_tieu_thu,
+             "SanLuongTieuThu": y3_6_san_luong_tt,
+             "SoTienHomKiaf_VND": y3_6_san_luong
     }},
 	"LichCatDien": {
 		"Ngay": NgayCatDien,
@@ -304,7 +325,7 @@ Vu_Tuyen_Json = {
        "SanLuong": str(y["data"]["customerInfo"]["invoice"][0]["usageAmount"])+"(kWh)",
        "SoTien_ThanhToan": format (y["data"]["customerInfo"]["invoice"][0]["paymentTotalAmount"], ',d')+"(VNĐ)",
        "TrangThai_ThanhToan": TTTT1,
-       "Ti_Le_ThayDoi": str(y["data"]["customerInfo"]["chiSoDienList"][0]["sanLuongChangeRate"])+"%",
+       "Ti_Le_ThayDoi": Ti_Le_Thay_Doi,
        "PhuongThucThanhToan": PhuongThucThanhToan,
        "ThoiGianThanhToan": ThoiGianThanhToan
     },
@@ -324,5 +345,5 @@ Vu_Tuyen_Json = {
        "Mail": "tuyenbau1997@gmail.com"
     }
     }
-resultJSON = json.dumps(Vu_Tuyen_Json, indent=4, ensure_ascii=False)
-print(resultJSON)
+json_RES_HomeAssistant = json.dumps(Vu_Tuyen_Json, indent=4, ensure_ascii=False)
+print(json_RES_HomeAssistant)
