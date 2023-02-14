@@ -8,6 +8,7 @@ B3: cấu hình trong file "sensors.yaml" theo mẫu dưới đây:
     - platform: command_line
       name: python EVN Miền Bắc
       command: "python3 /config/EVN/EVN.py"
+      command_timeout: 30
       value_template: '{{ value_json.name }}'
       scan_interval:
         minutes: 180
