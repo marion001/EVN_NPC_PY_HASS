@@ -187,7 +187,7 @@ ssTi_Le_ThayDoi = str(y["data"]["customerInfo"]["chiSoDienList"][0]["sanLuongCha
 if (ssTi_Le_ThayDoi[0] == "-"):
     Ti_Le_Thay_Doi = "Giảm "+str(y["data"]["customerInfo"]["chiSoDienList"][0]["sanLuongChangeRate"])+"%"
 else:
-    Ti_Le_Thay_Doi = "Tăng "+str(y["data"]["customerInfo"]["chiSoDienList"][0]["sanLuongChangeRate"])+"%"
+    Ti_Le_Thay_Doi = "Tăng +"+str(y["data"]["customerInfo"]["chiSoDienList"][0]["sanLuongChangeRate"])+"%"
 
 #Tính Toán Tiền Điện Theo Bậc
 # Từ 1 đến 50 số điện
