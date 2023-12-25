@@ -7,31 +7,36 @@ import datetime
 from datetime import datetime
 from datetime import timedelta, date
 from requests.structures import CaseInsensitiveDict
-Ma_Khach_Hang = "PA***********" #Mã Khách Hàng EVN Miền Bắc, thay mã khách hàng của bạn tại đây
-Mat_Khau = "******"             #Mật Khẩu Đăng nhập App EVNNPC.CSKH
+Ma_Khach_Hang = "PA23VG0053140" #Mã Khách Hàng EVN Miền Bắc, thay mã khách hàng của bạn tại đây
+Mat_Khau = "123456"             #Mật Khẩu Đăng nhập App EVNNPC.CSKH
 MaVung = Ma_Khach_Hang[0:6]
 #MaDiemDo = Ma_Khach_Hang+"001"
 SetNgayThang = datetime.now().strftime('%d-%m-%Y')
 TruNgayThang = date.today() - timedelta(days=5)
 CongNgayCatDien = date.today() + timedelta(days=7)
 Key_Basic = "A21FA5C-34BE-42D7-AE70-8BF03C1EE540:026A64EF-2A91-4973-AA20-6E8A2B66D560"
-URL_Bear_Token = 'https://billnpccc.enterhub.asia/login'
+URL_Bear_Token = 'https://billnpccc.enterhub.asia/loginV2'
 API_HOME = 'https://billnpccc.enterhub.asia/mobileapi/home/'+Ma_Khach_Hang
 API_Co_Mat_Dien = 'https://billnpccc.enterhub.asia/mobileapi/thong-tin-cat-dien'
 Api_Dien_Ngay = 'https://billnpccc.enterhub.asia/dailyconsump'
 API_Lich_Cat_Dien = 'https://billnpccc.enterhub.asia/PowerLossByCustomerID'
 #####################################################################
 #GET Token Bearer Authorization
+
 Bearer_Authorization = {
   'Host': 'billnpccc.enterhub.asia',
-  'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
+  'User-Agent': 'NPCApp/2 CFNetwork/1335.0.3 Darwin/21.6.0',
   'Accept': '*/*',
   'Accept-Language': 'vi-VN,vi;q=0.9',
-  'Authorization': 'Basic '+base64.b64encode(Key_Basic.encode('ascii')).decode('ascii'),
+  'Authorization': 'Bearer d5.XmIkgNLfLNd5esZiR4udlESDWHEECs8vJ5Q4tHg6IQysVOE.YS',
   'Content-Type': 'application/x-www-form-urlencoded'
 }
-Token_EVN = requests.request("POST", URL_Bear_Token, headers=Bearer_Authorization, data='username='+Ma_Khach_Hang+'&password='+Mat_Khau)
-Bearer_Token = Token_EVN.json()
+
+Token_EVN = requests.request("POST", URL_Bear_Token, headers=Bearer_Authorization, data='UserName='+Ma_Khach_Hang+'&Password='+Mat_Khau)
+response_data = Token_EVN.json()
+Bearer_Token = response_data.get('access_token')
+
+
 #print(Bearer_Token["access_token"])
 #print(Bearer_Token)
 #############################
@@ -41,7 +46,7 @@ HOME_EVN_NPC = {
   'Content-Type': 'application/json',
   'Accept': 'application/json',
   'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
-  'Authorization': 'Bearer '+Bearer_Token["access_token"],
+  'Authorization': 'Bearer '+Bearer_Token,
   'Accept-Language': 'vi-VN,vi;q=0.9'
 }
 resp1 = requests.request("GET", API_HOME, headers=HOME_EVN_NPC, data={})
@@ -58,7 +63,7 @@ headers_Co_Mat_Dien = {
   'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
   'Accept': 'application/json',
   'Accept-Language': 'vi-VN,vi;q=0.9',
-  'Authorization': 'Bearer '+Bearer_Token["access_token"]
+  'Authorization': 'Bearer '+Bearer_Token
 }
 resp2 = requests.request("POST", API_Co_Mat_Dien, headers=headers_Co_Mat_Dien, data=payload_Co_Mat_Dien)
 #API Điện Ngày
@@ -73,7 +78,7 @@ headers_DienNgay = {
   'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
   'Accept': 'application/json',
   'Accept-Language': 'vi-VN,vi;q=0.9',
-  'Authorization': 'Bearer '+Bearer_Token["access_token"]
+  'Authorization': 'Bearer '+Bearer_Token
 }
 resp3 = requests.request("POST", Api_Dien_Ngay, headers=headers_DienNgay, data=payload_DienNgay)
 #Bỏ qua lỗi nết get API điện ngày thất bại
@@ -119,7 +124,7 @@ headers_PowerLossByCustomerID = {
   'User-Agent': 'NPCApp/1 CFNetwork/1335.0.3 Darwin/21.6.0',
   'Accept': 'application/json',
   'Accept-Language': 'vi-VN,vi;q=0.9',
-  'Authorization': 'Bearer '+Bearer_Token["access_token"]
+  'Authorization': 'Bearer '+Bearer_Token
 }
 resp4 = requests.request("POST", API_Lich_Cat_Dien, headers=headers_PowerLossByCustomerID, data=payload_PowerLossByCustomerID)
 y4 = (resp4.json()) 
